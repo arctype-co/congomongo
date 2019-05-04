@@ -111,7 +111,7 @@
   server addresses and MongoClientOptions.
 
   username and password may be supplied for authenticated connections."
-  [db {:keys [instances options username password]}]
+  [db {:keys [instances options username password auth-db]}]
   (when (not= (nil? username) (nil? password))
     (throw (IllegalArgumentException. "Username and password must both be supplied for authenticated connections")))
 
@@ -124,7 +124,7 @@
         mongo (cond
                 (and username password) (make-mongo-client
                                           addresses
-                                          [(MongoCredential/createCredential username db (.toCharArray password))]
+                                          [(MongoCredential/createCredential username (or auth-db db) (.toCharArray password))]
                                           options)
                 :else (make-mongo-client addresses options))
 
